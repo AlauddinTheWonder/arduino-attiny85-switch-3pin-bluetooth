@@ -17,11 +17,11 @@ int command = 0;
 
 void enableBTMode()
 {
-  delay(50);
-  pinMode(RxD, INPUT);
-  pinMode(TxD, OUTPUT);
-
-  delay(50);
+//  delay(50);
+//  pinMode(RxD, INPUT);
+//  pinMode(TxD, OUTPUT);
+//  delay(50);
+  
   BT.begin(9600);
 
   delay(500);
@@ -40,7 +40,6 @@ void runBT()
 
   if(readData.length() > 0)
   {
-//    delay(1000);
     analyzeData(readData);
     readData = "";
   }
@@ -63,10 +62,15 @@ void executeCommand(int command, String value)
   {
     int v = value.toInt();
     setSwitchValue(command, byte(v));
+    BT.print(command);
+    BT.print(":");
+    BT.println(v);
   }
   else if (command == GETSINFO)
   {
     int v = value.toInt();
+    BT.print(v);
+    BT.print(":");
     BT.println(getSwitchValue(byte(v)));
   }
   else if (command == GETTIME)
@@ -79,6 +83,9 @@ void executeCommand(int command, String value)
       setTimeNow(t);
       delay(100);
       BT.println(getTimeNow());
+    }
+    else {
+      BT.println(-1);
     }
   }
 }

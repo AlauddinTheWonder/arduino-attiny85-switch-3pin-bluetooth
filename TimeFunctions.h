@@ -7,11 +7,38 @@
  * 2. DS1307RTC Lib
  */
 
+byte retries = 0;
+
+boolean validateTime() {
+  int yy = year();
+  int mon = month();
+  int dd = day();
+  int hh = hour();
+  
+  if (yy < 2010) {
+    return false;
+  }
+  if (mon <= 0 || mon > 12) {
+    return false;
+  }
+  if (dd <= 0 || dd > 31) {
+    return false;
+  }
+  if (hh < 0 || hh > 23) {
+    return false;
+  }
+  return true;
+}
+
 void connectDS1307() {
   
-  while(timeStatus() != timeSet) {
+  while(timeStatus() != timeSet && retries < 3) {
     setSyncProvider(RTC.get);
-    delay(1000);
+    retries++;
+    delay(500);
+  }
+  if (!validateTime()) {
+    setTime(1585699200); // Setting dummy as 1 April 2020 00:00:00 GMT
   }
 //   setSyncInterval(3600);
 }
@@ -23,7 +50,9 @@ unsigned long getTimeNow() {
 void setTimeNow(unsigned long t) {
   setTime(t);
   delay(500);
-  RTC.set(now());
+  if (validateTime()) {
+    RTC.set(now());
+  }
 }
 
 int getDriftedTime() {
@@ -77,25 +106,4 @@ void syncDriftedTime(int sec) {
   }
 
   setTime(hh, mm, ss, dd, mmm, yy);
-}
-
-boolean validateTime() {
-  int yy = year();
-  int mon = month();
-  int dd = day();
-  int hh = hour();
-  
-  if (yy < 2010) {
-    return false;
-  }
-  if (mon <= 0 || mon > 12) {
-    return false;
-  }
-  if (dd <= 0 || dd > 31) {
-    return false;
-  }
-  if (hh < 0 || hh > 23) {
-    return false;
-  }
-  return true;
 }

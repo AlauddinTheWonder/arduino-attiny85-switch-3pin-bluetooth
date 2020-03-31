@@ -26,9 +26,9 @@ byte wtd_cnt = 0;        // Counter for task execution comparision.
  * Pin0 - RTC SDA (Phy Pin5) - occupied
  * Pin2 - RTC SCL (Phy Pin7) - occupied 
  */
-#define Switch_1 1      // Food Pin
-#define Switch_2 3      // Filter Pin
-#define Switch_3 4      // Light Pin
+#define Switch_1 1
+#define Switch_2 3
+#define Switch_3 4
 #define ModePin 1       // with 10K to Gnd. VCC to enable BT mode
 
 // Time schedule (in Hour) -- Same on and off value means disable
@@ -44,14 +44,7 @@ byte Switch_3_off = 0;
 byte BTenabled = 0; // indicate whether BT is enabled or not
 
 void setup() {
-  connectDS1307();
-//  setTimeNow(1585317281);
-
-  initVarsFromEEPROM();
-
-  delay(500);
   pinMode(ModePin, INPUT);
-  delay(50);
 
   if (digitalRead(ModePin)) {
     BTenabled = 1;
@@ -64,8 +57,17 @@ void setup() {
     pinMode(Switch_2, OUTPUT);
     pinMode(Switch_3, OUTPUT);
 
+    digitalWrite(Switch_1, LOW);
+    digitalWrite(Switch_2, LOW);
+    digitalWrite(Switch_3, LOW);
+
     setup_watchdog(watchdog_mode);
   }
+
+  connectDS1307();
+//  setTimeNow(1585699200); // for dummy
+
+  initVarsFromEEPROM();
 
   delay(500);
 }
@@ -82,24 +84,27 @@ void loop() {
       
       setTime(RTC.get());
       delay(100);
+
+      if (validateTime()) {
+    
+        byte _hour = hour();
   
-      byte _hour = hour();
-
-      // Switch 1
-      byte Swt1_sts = getOnOffStatus(_hour, Switch_1_on, Switch_1_off);
-      digitalWrite(Switch_1, Swt1_sts);
-      delay(100);
-
-      // Switch 2
-      byte Swt2_sts = getOnOffStatus(_hour, Switch_2_on, Switch_2_off);
-      digitalWrite(Switch_2, Swt2_sts);
-      delay(100);
-      
-      // Switch 3
-      byte Swt3_sts = getOnOffStatus(_hour, Switch_3_on, Switch_3_off);
-      digitalWrite(Switch_3, Swt3_sts);
-
-      delay(500);
+        // Switch 1
+        byte Swt1_sts = getOnOffStatus(_hour, Switch_1_on, Switch_1_off);
+        digitalWrite(Switch_1, Swt1_sts);
+        delay(100);
+  
+        // Switch 2
+        byte Swt2_sts = getOnOffStatus(_hour, Switch_2_on, Switch_2_off);
+        digitalWrite(Switch_2, Swt2_sts);
+        delay(100);
+        
+        // Switch 3
+        byte Swt3_sts = getOnOffStatus(_hour, Switch_3_on, Switch_3_off);
+        digitalWrite(Switch_3, Swt3_sts);
+  
+        delay(500);
+      }
     }
   
     wtd_cnt++;
