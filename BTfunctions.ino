@@ -8,6 +8,8 @@ SoftwareSerial BT(RxD, TxD);
 
 // Commands
 // 1-6 for setting switch value
+#define PINGBACK 999
+#define GETSWITCHNUM 99
 #define GETSINFO 7
 #define GETTIME 8
 #define SETTIME 9
@@ -58,19 +60,27 @@ void analyzeData(String str)
 
 void executeCommand(int command, String value)
 {
-  if (command > 0 && command < 7)
+  if (command == PINGBACK)
+  {
+    // Should use on BT connected
+    BT.println(PINGBACK);
+  }
+  else if (command == GETSWITCHNUM)
+  {
+    // Current program is controlling 3 switches
+    BT.println(3);
+  }
+  
+  else if (command > 0 && command < 7)
   {
     int v = value.toInt();
     setSwitchValue(command, byte(v));
-    BT.print(command);
-    BT.print(":");
-    BT.println(v);
+    delay(50);
+    BT.println(getSwitchValue(byte(command)));
   }
   else if (command == GETSINFO)
   {
     int v = value.toInt();
-    BT.print(v);
-    BT.print(":");
     BT.println(getSwitchValue(byte(v)));
   }
   else if (command == GETTIME)

@@ -45,6 +45,7 @@ byte BTenabled = 0; // indicate whether BT is enabled or not
 
 void setup() {
   pinMode(ModePin, INPUT);
+//  delay(10);
 
   if (digitalRead(ModePin)) {
     BTenabled = 1;
