@@ -3,7 +3,7 @@
  * 2018-12-15
  * Time and DS1307 related Functions
  * Dependencies:
- * 1. TinyDS1307 Lib
+ * 1. TinyDS1307 : https://github.com/AlauddinTheWonder/arduino-tiny_ds1307.git
  */
 
 tmElements_t getTime()

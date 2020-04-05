@@ -4,8 +4,8 @@
  * ATtiny85 Low-Powered Automate 3 switches
  * Dependencies:
  * 1. SoftwareSerial (for BT)
- * 2. Time Lib
- * 3. DS1307RTC Lib
+ * 2. TinyDS1307 : https://github.com/AlauddinTheWonder/arduino-tiny_ds1307.git
+ * 3. Wire or TinyWireM
  */
 
 // 7404 w/ time lib
