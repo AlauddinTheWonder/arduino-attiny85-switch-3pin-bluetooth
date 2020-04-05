@@ -1,29 +1,35 @@
 #define ADDR_VERS 0
+#ifndef TOTAL_SWT
+#define TOTAL_SWT 2 // should define on main ino
+#endif
 
 void initVarsFromEEPROM()
 {
   int vs = EEPROM.read(ADDR_VERS);
 
-  if (vs > 0 && vs < 255) {
-    Switch_1_on = EEPROM.read(1);
-    Switch_1_off = EEPROM.read(2);
-
-    Switch_2_on = EEPROM.read(3);
-    Switch_2_off = EEPROM.read(4);
-
-    Switch_3_on = EEPROM.read(5);
-    Switch_3_off = EEPROM.read(6);
+  if (vs == TOTAL_SWT) {
+    uint8_t cnt = 1;
+    for (uint8_t r = 0; r < TOTAL_SWT; r++)
+    {
+      for (uint8_t c = 1; c <= 2; c++) // 0=Pin, 1=On, 2=Off
+      {
+        Switches[r][c] = EEPROM.read(cnt);
+        cnt++;
+      }
+    }
   }
   else {
-//    clearEEPROM();
-    delay(50);
-    EEPROM.write(ADDR_VERS, 1);
-    EEPROM.write(1, Switch_1_on);
-    EEPROM.write(2, Switch_1_off);
-    EEPROM.write(3, Switch_2_on);
-    EEPROM.write(4, Switch_2_off);
-    EEPROM.write(5, Switch_3_on);
-    EEPROM.write(6, Switch_3_off);
+    EEPROM.write(ADDR_VERS, TOTAL_SWT);
+
+    uint8_t cnt = 1;
+    for (uint8_t r = 0; r < TOTAL_SWT; r++)
+    {
+      for (uint8_t c = 1; c <= 2; c++) // 0=Pin, 1=On, 2=Off
+      {
+        EEPROM.write(cnt, Switches[r][c]);
+        cnt++;
+      }
+    }
   }
 }
 
@@ -35,13 +41,6 @@ byte getSwitchValue(byte addr)
 void setSwitchValue(byte addr, byte val)
 {
   EEPROM.write(addr, val);
-  delay(10);
-  int vs = EEPROM.read(ADDR_VERS);
-  delay(10);
-  if (vs >= 250) {
-    vs = 0;
-  }
-  EEPROM.write(ADDR_VERS, ++vs);
 }
 
 void clearEEPROM()

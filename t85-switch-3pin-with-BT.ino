@@ -8,9 +8,12 @@
  * 3. DS1307RTC Lib
  */
 
+// 7404 w/ time lib
+// 6822 w/o time lib
+// 6780 pins to array
+
 #include <EEPROM.h>
-#include <TimeLib.h>
-#include <DS1307RTC.h>
+#include <TinyDS1307.h>
 #include "Watchdog.h"
 #include "functions.h"
 #include "TimeFunctions.h"
@@ -20,32 +23,29 @@
 #define wtd_cnt_reset 75 // Actual task will be executed after this counter.
 byte wtd_cnt = 0;        // Counter for task execution comparision.
 
+
 /* 
  * Pins Setting
  * -------------------------
  * Pin0 - RTC SDA (Phy Pin5) - occupied
  * Pin2 - RTC SCL (Phy Pin7) - occupied 
  */
-#define Switch_1 1
-#define Switch_2 3
-#define Switch_3 4
+
+#define TOTAL_SWT 3     // 3 Pin controller
+
+#define RxD 3 // BT Tx
+#define TxD 4 // BT Rx
 #define ModePin 1       // with 10K to Gnd. VCC to enable BT mode
 
 // Time schedule (in Hour) -- Same on and off value means disable
-byte Switch_1_on = 6;
-byte Switch_1_off = 22;
-
-byte Switch_2_on = 8;
-byte Switch_2_off = 19;
-
-byte Switch_3_on = 8;
-byte Switch_3_off = 0;
+// Switches                    = { Pin, OnHour, OffHour }
+uint8_t Switches[TOTAL_SWT][3] = { {1, 6, 22}, {3, 8, 19}, {4, 8, 0} };
 
 byte BTenabled = 0; // indicate whether BT is enabled or not
 
+
 void setup() {
   pinMode(ModePin, INPUT);
-//  delay(10);
 
   if (digitalRead(ModePin)) {
     BTenabled = 1;
@@ -54,19 +54,18 @@ void setup() {
   else {
     BTenabled = 0;
 
-    pinMode(Switch_1, OUTPUT);
-    pinMode(Switch_2, OUTPUT);
-    pinMode(Switch_3, OUTPUT);
-
-    digitalWrite(Switch_1, LOW);
-    digitalWrite(Switch_2, LOW);
-    digitalWrite(Switch_3, LOW);
+    for (uint8_t r = 0; r < TOTAL_SWT; r++)
+    {
+      uint8_t pin = Switches[r][0];
+      
+      pinMode(pin, OUTPUT);
+      digitalWrite(pin, LOW);
+    }
 
     setup_watchdog(watchdog_mode);
   }
 
-  connectDS1307();
-//  setTimeNow(1585699200); // for dummy
+  // connectDS1307(); // By-passing RTC check here.
 
   initVarsFromEEPROM();
 
@@ -79,31 +78,26 @@ void loop() {
   }
   else {
     if (wtd_cnt == 0) {
-  
-      // Watchdog sleep mode also stops Timer.
-      // Get current time from RTC module
-      
-      setTime(RTC.get());
+
+      tmElements_t tm = getTime();
+
       delay(100);
 
-      if (validateTime()) {
+      if (RTC.chipPresent() && validateTime(tm)) {
     
-        byte _hour = hour();
-  
-        // Switch 1
-        byte Swt1_sts = getOnOffStatus(_hour, Switch_1_on, Switch_1_off);
-        digitalWrite(Switch_1, Swt1_sts);
-        delay(100);
-  
-        // Switch 2
-        byte Swt2_sts = getOnOffStatus(_hour, Switch_2_on, Switch_2_off);
-        digitalWrite(Switch_2, Swt2_sts);
-        delay(100);
-        
-        // Switch 3
-        byte Swt3_sts = getOnOffStatus(_hour, Switch_3_on, Switch_3_off);
-        digitalWrite(Switch_3, Swt3_sts);
-  
+        byte _hour = tm.Hour;
+
+        for (uint8_t r = 0; r < TOTAL_SWT; r++)
+        {
+          uint8_t pin = Switches[r][0];
+          uint8_t on = Switches[r][1];
+          uint8_t off = Switches[r][2];
+
+          byte switch_status = getOnOffStatus(_hour, on, off);
+          digitalWrite(pin, switch_status);
+          delay(100);
+        }
+
         delay(500);
       }
     }

@@ -3,62 +3,50 @@
  * 2018-12-15
  * Time and DS1307 related Functions
  * Dependencies:
- * 1. Time Lib
- * 2. DS1307RTC Lib
+ * 1. TinyDS1307 Lib
  */
 
-byte retries = 0;
+tmElements_t getTime()
+{
+  return RTC.getTM();
+}
 
-boolean validateTime() {
-  int yy = year();
-  int mon = month();
-  int dd = day();
-  int hh = hour();
+unsigned long getTimeNow() {
+  return RTC.get();
+}
+
+bool setTimeNow(unsigned long t) {
+  return RTC.set(t);
+}
+
+boolean validateTime(tmElements_t tm) {
   
-  if (yy < 2010) {
+  if (tm.Year < 2010) {
     return false;
   }
-  if (mon <= 0 || mon > 12) {
+  if (tm.Month <= 0 || tm.Month > 12) {
     return false;
   }
-  if (dd <= 0 || dd > 31) {
+  if (tm.Day <= 0 || tm.Day > 31) {
     return false;
   }
-  if (hh < 0 || hh > 23) {
+  if (tm.Hour < 0 || tm.Hour > 23) {
     return false;
   }
   return true;
 }
 
-void connectDS1307() {
-  
-  while(timeStatus() != timeSet && retries < 3) {
-    setSyncProvider(RTC.get);
-    retries++;
-    delay(500);
-  }
-  if (!validateTime()) {
-    setTime(1585699200); // Setting dummy as 1 April 2020 00:00:00 GMT
-  }
-//   setSyncInterval(3600);
-}
-
-unsigned long getTimeNow() {
-  return now();
-}
-
-void setTimeNow(unsigned long t) {
-  setTime(t);
-  delay(500);
-  if (validateTime()) {
-    RTC.set(now());
+void connectDS1307()
+{
+  while (!RTC.isRunning()) {
+    delay(2000);
   }
 }
 
 int getDriftedTime() {
-  int mmm = month();
-
-  switch(mmm) {
+  tmElements_t tm = getTime();
+  
+  switch(tm.Month) {
     case 11:
       return 1;
     case 12:
@@ -71,19 +59,22 @@ int getDriftedTime() {
   }
 }
 
-void syncDriftedTime(int sec) {
-  int yy, mmm, dd, hh, mm, ss;
-
+void syncDriftedTime(int sec)
+{
   if (sec <= 0 && sec >= 60) {
     return;
   }
+
+  tmElements_t tm = getTime();
+
+  int yy, mmm, dd, hh, mm, ss;
   
-  yy = year();
-  mmm = month();
-  dd = day();
-  hh = hour();
-  mm = minute();
-  ss = second();
+  hh = tm.Hour;
+  mm = tm.Minute;
+  ss = tm.Second;
+  dd = tm.Day;
+  mmm = tm.Month;
+  yy = tm.Year;
 
   // Increased 1 sec only to avoid callback loop.
   sec++;
@@ -105,5 +96,5 @@ void syncDriftedTime(int sec) {
     }
   }
 
-  setTime(hh, mm, ss, dd, mmm, yy);
+  RTC.set(hh, mm, ss, dd, mmm, yy);
 }

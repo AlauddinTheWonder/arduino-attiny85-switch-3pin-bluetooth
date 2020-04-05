@@ -1,7 +1,13 @@
 #include <SoftwareSerial.h>
 
+#ifndef RxD
 #define RxD 3 // BT Tx
 #define TxD 4 // BT Rx
+#endif
+
+#ifndef TOTAL_SWT
+#define TOTAL_SWT 2 // should define on main ino
+#endif
 
 
 SoftwareSerial BT(RxD, TxD);
@@ -67,8 +73,7 @@ void executeCommand(int command, String value)
   }
   else if (command == GETSWITCHNUM)
   {
-    // Current program is controlling 3 switches
-    BT.println(3);
+    BT.println(TOTAL_SWT);
   }
   
   else if (command > 0 && command < 7)
