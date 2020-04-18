@@ -15,9 +15,9 @@ SoftwareSerial BT(RxD, TxD);
 
 // Commands
 #define PINGBACK 255
-#define GET_NUM_SWITCH 254
-#define GET_TIME 253
-#define SET_TIME 252
+#define GET_TIME 254
+#define SET_TIME 253
+#define GET_NUM_SWITCH 252
 #define GET_ROM_VAL 251
 #define DRIFT_TIME 250 // must be same as defined in DRIFT_ADDR on RomFunctions.ino
 

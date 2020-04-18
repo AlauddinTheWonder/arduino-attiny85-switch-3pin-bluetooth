@@ -58,9 +58,9 @@ Command details:
 Sr No  | Command  | Param      | Return      | Description
 ------ | -------- | -----------| ----------- | -----------
 1      | 255      | 0          | SAME_PARAM  | Pingback. To recognize this device
-2      | 254      | 0          | PIN_COUNT   | Get number of switch device support. Ex. 3
-3      | 253      | 0          | TIMESTAMP   | Get RTC time in timestamp (UTC)
-4      | 252      | TIMESTAMP  | SAME_PARAM  | Set RTC time, value in timestampt (UTC). Return the same as Param if success
+2      | 254      | 0          | TIMESTAMP   | Get RTC time in timestamp (UTC)
+3      | 253      | TIMESTAMP  | SAME_PARAM  | Set RTC time, value in timestampt (UTC). Return the same as Param if success
+4      | 252      | 0          | 1-30        | Get number of switch device support. Ex. 3
 5      | 251      | ROM_ADDR   | 0-255       | Read value from EEPROM. To read switch value. ROM_ADDR will be between 0 and (PIN_COUNT * 2)
 6      | 251      | 250        | 0-59        | Get time drift in second(s)
 7      | 250      | 0-59       | SAME_PARAM  | Set time drift in second(s)
