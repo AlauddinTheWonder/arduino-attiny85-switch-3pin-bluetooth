@@ -64,7 +64,7 @@ Sr No  | Command  | Param      | Return      | Description
 5      | 251      | ROM_ADDR   | 0-255       | Read value from EEPROM. To read switch value. ROM_ADDR will be between 0 and (PIN_COUNT * 2)
 6      | 251      | 250        | 0-59        | Get time drift in second(s)
 7      | 250      | 0-59       | SAME_PARAM  | Set time drift in second(s)
-8      | 0-60     | 0-23       | SAME_PARAM  | Write value to EEPROM. Set hours to switches. Ex. Command: 0=On (Swt 1), 1=Off (Swt 1), 2=On (Swt 2), 3=Off (Swt 2), so on...
+8      | 0-60     | 0-23       | SAME_PARAM  | Write value to EEPROM. Set hours to switches. Ex. Command: 0 = Swt 1 On, 1 = Swt 1 Off, 2 = Swt 2 On, 3 = Swt 2 Off, so on...
 
 
   
