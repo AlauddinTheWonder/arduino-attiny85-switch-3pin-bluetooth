@@ -1,11 +1,14 @@
-#define ADDR_VERS 0
+#include <EEPROM.h>
+
+#define NUM_PINS_ADDR 0
+#define DRIFT_ADDR 250 // must be same as defined in DRIFT_TIME on BTfunctions.ino
 #ifndef TOTAL_SWT
 #define TOTAL_SWT 2 // should define on main ino
 #endif
 
-void initVarsFromEEPROM()
+void initEnvROM()
 {
-  int vs = EEPROM.read(ADDR_VERS);
+  int vs = EEPROM.read(NUM_PINS_ADDR);
 
   if (vs == TOTAL_SWT) {
     uint8_t cnt = 1;
@@ -17,9 +20,10 @@ void initVarsFromEEPROM()
         cnt++;
       }
     }
+    driftSecond = EEPROM.read(DRIFT_ADDR);
   }
   else {
-    EEPROM.write(ADDR_VERS, TOTAL_SWT);
+    EEPROM.write(NUM_PINS_ADDR, TOTAL_SWT);
 
     uint8_t cnt = 1;
     for (uint8_t r = 0; r < TOTAL_SWT; r++)
@@ -30,17 +34,18 @@ void initVarsFromEEPROM()
         cnt++;
       }
     }
+    EEPROM.write(DRIFT_ADDR, driftSecond);
   }
 }
 
-byte getSwitchValue(byte addr)
+byte getROMvalue(byte addr)
 {
   return EEPROM.read(addr);
 }
 
-void setSwitchValue(byte addr, byte val)
+void setROMvalue(byte addr, byte val)
 {
-  EEPROM.write(addr, val);
+  EEPROM.update(addr, val);
 }
 
 void clearEEPROM()
