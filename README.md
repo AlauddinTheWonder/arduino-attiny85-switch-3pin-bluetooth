@@ -73,5 +73,5 @@ Sr No  | Command  | Param      | Return      | Description
 ```
 Thanks & Regards,
 Alauddin Ansari
-https://github.com/AlauddinTheWonder
+[My GitHub Page](https://github.com/AlauddinTheWonder "Alauddin Ansari")
 ```
