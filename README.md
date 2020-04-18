@@ -67,11 +67,9 @@ Sr No  | Command  | Param      | Return      | Description
 8      | 0-60     | 0-23       | SAME_PARAM  | Write value to EEPROM. Set hours to switches. Ex. Command: 0=On (Swt 1), 1=Off (Swt 1), 2=On (Swt 2), 3=Off (Swt 2), so on...
 
 
-
-
+  
 ---
-```
-Thanks & Regards,
-Alauddin Ansari
-[My GitHub Page](https://github.com/AlauddinTheWonder "Alauddin Ansari")
-```
+  
+Best Regards,  
+Alauddin Ansari 
+([GitHub Page](https://github.com/AlauddinTheWonder "Alauddin Ansari"))
