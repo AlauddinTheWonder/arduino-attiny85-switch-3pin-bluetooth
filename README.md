@@ -19,11 +19,11 @@ Simple low powered automation to switch 3 AC sockets and controlled by Bluetooth
 Pin   | Name         | Wire connection
 ----- | ------------ | ---------------
 1     | Reset        | Not connected              
-2     | I/O Pin 3    | Switch 2  |  BT Tx         
-3     | I/O Pin 4    | Switch 3  |  BT Rx         
+2     | I/O Pin 3    | Switch 2, BT: Tx         
+3     | I/O Pin 4    | Switch 3, BT: Rx         
 4     | GND          | Connected to Ground        
 5     | I/O Pin 0    | RTC SDA                    
-6     | I/O Pin 1    | Switch 1  | Mode change pin
+6     | I/O Pin 1    | Switch 1, Mode change pin
 7     | I/O Pin 2    | RTC SCL                    
 8     | VCC          | Connected to +3.3v to +5v  
 
